@@ -20,18 +20,13 @@ const gameController = (function() {
 		return gridStr;
 	};
 
-	function playCompRound() {
+	function compRound() {
 		let randomNum = Math.floor(Math.random() * 8);
 		while (gameBoard[randomNum] !== ' ') {
 			randomNum = Math.floor(Math.random() * 9);
 		}
-		
-		console.log(randomNum);
-		if (Math.random() >= 0.5) {
-			gameBoard[randomNum] = 'x';
-		} else {
-			gameBoard[randomNum] = 'o';
-		}
+
+		gameBoard[randomNum] = 'x';
 
 		updateGridStr();
 		console.log(gridStr);
@@ -39,8 +34,17 @@ const gameController = (function() {
 		return gameBoard;
 	};
 
+	function playerRound(pos) {
+		gameBoard[pos] = 'o'; 
+		updateGridStr();
+		console.log(gridStr);
+
+		return gameBoard;
+	};
+
 	return {
-		playCompRound,
+		compRound,
+		playerRound,
 		updateGridStr,
 	};
 })();
