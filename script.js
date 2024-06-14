@@ -6,45 +6,43 @@ const gameController = (function() {
 		}
 		return gameBoard;
 	}());
+
 	let gridStr = '';
 
-	for (let i = 1; i < 10; i++) {
-		gridStr = gridStr.concat('|', gameBoard[i-1], '|');
-		if (i % 3 == 0 && i !== 1){
-			gridStr = gridStr.concat('\n');
-		}
-	}
-
-	function createCompChoice() {
-		if (Math.random() >= 0.5) {
-			return 'x';
-		} else {
-			return 'o';
-		}
-	}
-
 	function updateGridStr() {
+		gridStr = '';
 		for (let i = 0; i < 9; i++) {
 			gridStr = gridStr.concat('|', gameBoard[i], '|');
-			if (i % 3 == 0 && i !== 0){
+			if (i == 2 || i == 5){
 				gridStr = gridStr.concat('\n');
 			}
 		}
-	}
+		return gridStr;
+	};
 
-	function playRound() {
-		let choice = createCompChoice();
-		let randomNum = Math.floor(Math.random(8));
-		gameBoard[randomNum] = choice;
+	function playCompRound() {
+		let randomNum = Math.floor(Math.random() * 8);
+		while (gameBoard[randomNum] !== ' ') {
+			randomNum = Math.floor(Math.random() * 9);
+		}
+		
+		console.log(randomNum);
+		if (Math.random() >= 0.5) {
+			gameBoard[randomNum] = 'x';
+		} else {
+			gameBoard[randomNum] = 'o';
+		}
+
 		updateGridStr();
-	}
+		console.log(gridStr);
+
+		return gameBoard;
+	};
 
 	return {
-		gameBoard,
-		createCompChoice,
-		playRound,
-		gridStr,
+		playCompRound,
+		updateGridStr,
 	};
 })();
 
-console.log(gameController.gridStr);
+console.log(gameController.updateGridStr());
