@@ -1,0 +1,44 @@
+body {
+	display: flex;
+	align-items: center;
+	flex-direction: column;;
+	gap: 20px;
+}
+
+#board {
+	display: grid;
+	height: 500px;
+	aspect-ratio: 1/1;
+	grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
+	border: 1px solid black;
+}
+
+.block {
+	border: 1px solid black;
+	font-size: 10rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.block:hover{
+	background-color: rgb(237, 237, 237);
+}
+
+.playBtn {
+	height: 30px;
+	width: 100px;
+}
+
+img { 
+	position: absolute;
+}
+
+.circle{
+	height: 150px;
+}
+
+.cross {
+	height: 240px;
+}
+

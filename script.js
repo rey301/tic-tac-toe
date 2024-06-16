@@ -1,11 +1,12 @@
+// game controller module that controls all features of tic tac toe;
 const gameController = (function() {
-	let gameBoard = resetGameBoard();
+	let gameBoard = newGameBoard();
 	let gridStr = '';
 
-	function resetGameBoard() {
+	function newGameBoard() {
 		let gameBoard = new Array();
 		for (let i=0; i < 9; i++) {
-			gameBoard[i] = ' ';
+			gameBoard[i] = 'x';
 		}
 		return gameBoard;
 	}
@@ -74,7 +75,7 @@ const gameController = (function() {
 	};
 
 	function playGame() {
-		gameBoard = resetGameBoard();
+		gameBoard = newGameBoard();
 		let input = prompt('X or O?');
 		let playerSymbol = input.toLowerCase();
 		let compSymbol;
@@ -83,9 +84,7 @@ const gameController = (function() {
 		console.log('Game Start!');
 		console.log(gameController.updateGridStr());
 
-		let won = checkWin();
-
-		while(!checkWin()) {
+		while(checkWin()) {
 			compRound(compSymbol);
 			if (checkWin()) {
 				break;
@@ -98,9 +97,29 @@ const gameController = (function() {
 	}
 
 	return {
+		gameBoard,
 		compRound,
 		playerRound,
 		updateGridStr,
 		playGame,
 	};
 })();
+
+const grid = document.getElementById('board');
+let i = 0;
+for (const block of grid.children) {
+	let currSymbol = gameController.gameBoard[i];
+	var symbol = document.createElement('img');
+
+	if (Math.random() > 0.5) {
+		symbol.setAttribute('src', 'svgs/circle-svgrepo-com.svg');
+		symbol.className = 'circle';
+	} else {
+		symbol.setAttribute('src', 'svgs/cross-svgrepo-com.svg');
+		symbol.className = 'cross';
+	}
+	
+	block.appendChild(symbol);
+	console.log(block.textContent);
+	i++;
+}
