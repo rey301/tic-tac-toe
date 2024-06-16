@@ -19,6 +19,8 @@ const gameController = (function() {
 		}
 		return gridStr;
 	};
+	
+
 
 	function checkWin() {
 		const winCondArr = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[6,4,2]];
@@ -29,65 +31,60 @@ const gameController = (function() {
 
 			if (gameBoard[index1] == 'x' && gameBoard[index2] == 'x'
 				&& gameBoard[index3] == 'x') {
-					return 'x';
+					return 'x wins';
 			} else if (gameBoard[index1] == 'o' && gameBoard[index2] == 'o'
 				&& gameBoard[index3] == 'o') {
-					return 'o';
+					return 'o wins';
 			} 
 		}
+
+		return false;
 	}
 
-	// [0][1][2]
-	// [3][4][5]
-	// [6][7][8]
-
-	// middle: 4
-	// corners：[(0: [1, 2], [4, 8], [3, 6]), 
-	//			 (2: [0, 1], [5, 8], [4, 6]),
-	//		     (6: [0, 3], [7, 8], [4, 2])
-	// 			 (8: [0, 4], [2, 4 ], [7, 6])
-	// sides: [1, 3, 5, 7]
-
-	// 
-
-	function compRound() {
+	function compRound(symbol) {
 		let randomNum = Math.floor(Math.random() * 8);
 		while (gameBoard[randomNum] !== ' ') {
 			randomNum = Math.floor(Math.random() * 9);
 		}
 
-		gameBoard[randomNum] = 'x';
+		gameBoard[randomNum] = symbol;
 
 		updateGridStr();
 		console.log(gridStr);
 
-		let win = checkWin();
-
-		if (win) {
-			console.log(`${win} wins`);
-		}
-
 		return gameBoard;
 	};
-
+	
 	function playerRound(pos) {
 		gameBoard[pos] = 'x'; 
 		updateGridStr();
 		console.log(gridStr);
 
-		let win = checkWin();
-
-		if (win) {
-			console.log(`${win} wins`);
-		}
-
 		return gameBoard;
 	};
+
+	function playGame() {
+		let input = prompt('X or O?');
+		let playerSymbol = input.toLowerCase();
+		let compSymbol;
+		playerSymbol == 'x' ? compSymbol = 'o' : compSymbol = 'x';
+
+		console.log('Game Start!');
+
+		while (!checkWin()) {
+			compRound(compSymbol);
+			let posInput = prompt('Which position?');
+			playerRound(posInput);
+		}
+
+		return checkWin();
+	}
 
 	return {
 		compRound,
 		playerRound,
 		updateGridStr,
+		playGame,
 	};
 })();
 
