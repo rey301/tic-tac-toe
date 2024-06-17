@@ -1,9 +1,11 @@
 // game controller module that controls all features of tic tac toe;
 const gameController = (function() {
 	const grid = document.getElementById('board');
+
 	let gameBoard = newGameBoard();
 	let gridStr = '';
 	let playerSymbol;
+	let playerRoundEnd = true;
 
 	function newGameBoard() {
 		let gameBoard = new Array();
@@ -13,15 +15,8 @@ const gameController = (function() {
 		return gameBoard;
 	}
 
-	function displayBoard() {
-		for (const block of grid.children) {
-			let blockNum = block.classList[1];
-
-			block.addEventListener('click', () => {
-				playerRound(blockNum);
-			});
-
-			var symbol = document.createElement('img');
+	function displaySymbol(blockNum, block) {
+		var symbol = document.createElement('img');
 
 			if (gameBoard[blockNum] == 'o') {
 				symbol.setAttribute('src', 'svgs/circle-svgrepo-com.svg');
@@ -31,7 +26,14 @@ const gameController = (function() {
 				symbol.className = 'cross';
 			}
 		
-			block.appendChild(symbol);
+		block.appendChild(symbol);
+	}
+
+	function displayBoard() {
+		for (const block of grid.children) {
+			let blockNum = block.classList[1];
+			// run again to make sure it displays the comp's symbol
+			displaySymbol(blockNum, block); 
 		}
 	}
 
@@ -77,17 +79,19 @@ const gameController = (function() {
 	}
 
 	function compRound(symbol) {
-		let randomNum = Math.floor(Math.random() * 9);
-		while (gameBoard[randomNum] !== '') {
-			randomNum = Math.floor(Math.random() * 9);
+		if (!checkWin()) {
+			let randomNum = Math.floor(Math.random() * 9);
+			while (gameBoard[randomNum] !== '') {
+				randomNum = Math.floor(Math.random() * 9);
+			}
+
+			gameBoard[randomNum] = symbol;
+
+			// updateGridStr();
+			// console.log(gridStr);
+
+			displayBoard();
 		}
-
-		gameBoard[randomNum] = symbol;
-
-		// updateGridStr();
-		// console.log(gridStr);
-
-		displayBoard();
 
 		return gameBoard;
 	};
@@ -97,6 +101,7 @@ const gameController = (function() {
 		// updateGridStr();
 		// console.log(gridStr);
 
+		displayBoard();
 		return gameBoard;
 	};
 
@@ -107,23 +112,28 @@ const gameController = (function() {
 		let compSymbol;
 		playerSymbol == 'x' ? compSymbol = 'o' : compSymbol = 'x';
 
+		for (const block of grid.children) {
+			let blockNum = block.classList[1];
+			block.addEventListener('click', () => {
+				if (gameBoard[blockNum] == '') {
+					playerRound(blockNum);
+				}
+				// display the symbol upon clicking
+				displaySymbol(blockNum, block);
+				compRound(compSymbol);
+			});
+		}
+
+		compRound(compSymbol);
 		console.log('Game Start!');
 
-		console.log(checkWin());
-		compRound(compSymbol);
-
-		return checkWin();
+		
 	}
 
 	return {
-		gameBoard,
-		compRound,
-		playerRound,
 		playGame,
-		displayBoard,
 	};
 })();
 
-gameController.displayBoard();
 const playBtn = document.getElementById('playBtn');
 playBtn.addEventListener('click', () => gameController.playGame());
