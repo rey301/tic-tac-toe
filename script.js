@@ -1,14 +1,38 @@
 // game controller module that controls all features of tic tac toe;
 const gameController = (function() {
+	const grid = document.getElementById('board');
 	let gameBoard = newGameBoard();
 	let gridStr = '';
+	let playerSymbol;
 
 	function newGameBoard() {
 		let gameBoard = new Array();
 		for (let i=0; i < 9; i++) {
-			gameBoard[i] = 'x';
+			gameBoard[i] = '';
 		}
 		return gameBoard;
+	}
+
+	function displayBoard() {
+		for (const block of grid.children) {
+			let blockNum = block.classList[1];
+
+			block.addEventListener('click', () => {
+				playerRound(blockNum);
+			});
+
+			var symbol = document.createElement('img');
+
+			if (gameBoard[blockNum] == 'o') {
+				symbol.setAttribute('src', 'svgs/circle-svgrepo-com.svg');
+				symbol.className = 'circle';
+			} else if (gameBoard[blockNum] == 'x') {
+				symbol.setAttribute('src', 'svgs/cross-svgrepo-com.svg');
+				symbol.className = 'cross';
+			}
+		
+			block.appendChild(symbol);
+		}
 	}
 
 	function updateGridStr() {
@@ -32,7 +56,7 @@ const gameController = (function() {
 			let index3 = winCondArr[i][2];
 
 			// check if any spaces are empty
-			if (gameBoard[i] == ' ') {
+			if (gameBoard[i] == '') {
 				tieFlag = false;
 			}
 
@@ -54,22 +78,24 @@ const gameController = (function() {
 
 	function compRound(symbol) {
 		let randomNum = Math.floor(Math.random() * 9);
-		while (gameBoard[randomNum] !== ' ') {
+		while (gameBoard[randomNum] !== '') {
 			randomNum = Math.floor(Math.random() * 9);
 		}
 
 		gameBoard[randomNum] = symbol;
 
-		updateGridStr();
-		console.log(gridStr);
+		// updateGridStr();
+		// console.log(gridStr);
+
+		displayBoard();
 
 		return gameBoard;
 	};
 	
-	function playerRound(pos, symbol) {
-		gameBoard[pos] = symbol; 
-		updateGridStr();
-		console.log(gridStr);
+	function playerRound(pos) {
+		gameBoard[pos] = playerSymbol; 
+		// updateGridStr();
+		// console.log(gridStr);
 
 		return gameBoard;
 	};
@@ -77,21 +103,14 @@ const gameController = (function() {
 	function playGame() {
 		gameBoard = newGameBoard();
 		let input = prompt('X or O?');
-		let playerSymbol = input.toLowerCase();
+		playerSymbol = input.toLowerCase();
 		let compSymbol;
 		playerSymbol == 'x' ? compSymbol = 'o' : compSymbol = 'x';
 
 		console.log('Game Start!');
-		console.log(gameController.updateGridStr());
 
-		while(checkWin()) {
-			compRound(compSymbol);
-			if (checkWin()) {
-				break;
-			}
-			posInput = prompt('Which position?');
-			playerRound(posInput, playerSymbol);
-		}
+		console.log(checkWin());
+		compRound(compSymbol);
 
 		return checkWin();
 	}
@@ -100,26 +119,11 @@ const gameController = (function() {
 		gameBoard,
 		compRound,
 		playerRound,
-		updateGridStr,
 		playGame,
+		displayBoard,
 	};
 })();
 
-const grid = document.getElementById('board');
-let i = 0;
-for (const block of grid.children) {
-	let currSymbol = gameController.gameBoard[i];
-	var symbol = document.createElement('img');
-
-	if (Math.random() > 0.5) {
-		symbol.setAttribute('src', 'svgs/circle-svgrepo-com.svg');
-		symbol.className = 'circle';
-	} else {
-		symbol.setAttribute('src', 'svgs/cross-svgrepo-com.svg');
-		symbol.className = 'cross';
-	}
-	
-	block.appendChild(symbol);
-	console.log(block.textContent);
-	i++;
-}
+gameController.displayBoard();
+const playBtn = document.getElementById('playBtn');
+playBtn.addEventListener('click', () => gameController.playGame());
