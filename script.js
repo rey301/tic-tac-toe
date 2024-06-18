@@ -35,7 +35,7 @@ const gameController = (function() {
 	// Function to disable further clicks on tiles
 	function disableTiles() {
 		for (const tile of grid.children) {
-			tile.removeEventListener('click', tileClickListener);
+			attachListener(tileClickMessageListener);
 		}
 	}
 
@@ -54,7 +54,8 @@ const gameController = (function() {
 			// Checking for winning conditions for 'x' and 'o';
 			if (val1 && val1 === val2 && val1 === val3) {
 				disableTiles();
-				setTimeout(() => window.alert(`${val1} wins!`), 100);				
+				setTimeout(() => window.alert(`${val1} wins!`), 100);	
+							
 				return true;
 			};
 			if (!val1 || !val2 || !val3) tieFlag = false;
@@ -105,18 +106,28 @@ const gameController = (function() {
 		}
 	}
 
-	function playGame() {
-		gameBoard = initializeGameBoard();
-		playerSymbol = prompt('X or O?');
-		compSymbol = playerSymbol == 'x' ? 'o' : 'x';
-
-		// Attach event listeners to tiles
+	// Event listener for error message pop ups after clicking tiles
+	function tileClickMessageListener(event) {
+		window.alert('Game has ended! Please restart the game.');
+	}
+	
+	// Attach event listeners to tiles
+	function attachListener(listener) {
 		for (const tile of grid.children) {
 			// Replace any existing event listener by cloning the node
     		const newTile = tile.cloneNode(true);
     		tile.replaceWith(newTile);
-    		newTile.addEventListener('click', tileClickListener);
+    		newTile.addEventListener('click', listener);
 		}
+	}
+
+	function playGame() {
+		playBtn.textContent = 'Restart Game';
+		gameBoard = initializeGameBoard();
+		playerSymbol = prompt('X or O?').toLowerCase();
+		compSymbol = playerSymbol == 'x' ? 'o' : 'x';
+		
+		attachListener(tileClickListener);
 
 		console.log('Game Start!');
 		setTimeout(() => compRound(compSymbol), 100);
@@ -125,4 +136,6 @@ const gameController = (function() {
 	return { playGame };
 })();
 
-document.getElementById('playBtn').addEventListener('click', () => gameController.playGame());
+const playBtn = document.getElementById('playBtn');
+playBtn.addEventListener('click', () => gameController.playGame());
+
