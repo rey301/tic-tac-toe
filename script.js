@@ -3,6 +3,7 @@ const gameController = (function() {
 	const grid = document.getElementById('board');
 	let gameBoard = initializeGameBoard();
 	let playerSymbol;
+	let compSymbol;
 
 	// Initialize or reset the game board
 	function initializeGameBoard() {
@@ -30,7 +31,14 @@ const gameController = (function() {
 		Array.from(grid.children).forEach((tile, index) => displaySymbol(index, 
 			tile));
 	}
-	
+
+	// Function to disable further clicks on tiles
+	function disableTiles() {
+		for (const tile of grid.children) {
+			tile.removeEventListener('click', tileClickListener);
+		}
+	}
+
 	function checkWin() {
 		const winCondArr = [
 			[0,1,2],[3,4,5],[6,7,8],
@@ -45,13 +53,16 @@ const gameController = (function() {
 				gameBoard[index3]];
 			// Checking for winning conditions for 'x' and 'o';
 			if (val1 && val1 === val2 && val1 === val3) {
-				setTimeout(() => window.alert(`${val1} wins!`), 100);
+				disableTiles();
+				setTimeout(() => window.alert(`${val1} wins!`), 100);				
 				return true;
 			};
 			if (!val1 || !val2 || !val3) tieFlag = false;
 		}
 		
 		if (tieFlag) {
+			disableTiles();
+
 			setTimeout(() => window.alert("It's a tie!"), 100);
 			return true;
 		}
@@ -83,21 +94,21 @@ const gameController = (function() {
 		}
 		return gameBoard;
 	};
-	
+
+	// Event listener for tile clicks
+	function tileClickListener(event) {
+		const tile = event.currentTarget;
+		const tileNum = tile.classList[1];
+		if (gameBoard[tileNum] == '') {
+			playerRound(tileNum);
+			setTimeout(() => compRound(compSymbol), 100);
+		}
+	}
+
 	function playGame() {
 		gameBoard = initializeGameBoard();
 		playerSymbol = prompt('X or O?');
-		const compSymbol = playerSymbol == 'x' ? 'o' : 'x';
-	
-		// Event listener for tile clicks
-		function tileClickListener(event) {
-			const tile = event.currentTarget;
-			const tileNum = tile.classList[1];
-			if (gameBoard[tileNum] == '') {
-				playerRound(tileNum);
-				setTimeout(() => compRound(compSymbol), 100);
-			}
-		}
+		compSymbol = playerSymbol == 'x' ? 'o' : 'x';
 
 		// Attach event listeners to tiles
 		for (const tile of grid.children) {
