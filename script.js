@@ -44,11 +44,19 @@ const gameController = (function() {
 			const [val1, val2, val3] = [gameBoard[index1], gameBoard[index2], 
 				gameBoard[index3]];
 			// Checking for winning conditions for 'x' and 'o';
-			if (val1 && val1 === val2 && val1 === val3) return true;
+			if (val1 && val1 === val2 && val1 === val3) {
+				setTimeout(() => window.alert(`${val1} wins!`), 100);
+				return true;
+			};
 			if (!val1 || !val2 || !val3) tieFlag = false;
 		}
 		
-		return tieFlag ? "It's a tie!" : false;
+		if (tieFlag) {
+			setTimeout(() => window.alert("It's a tie!"), 100);
+			return true;
+		}
+		
+		return false;
 	}
 
 	// Execute computer's move
@@ -60,16 +68,19 @@ const gameController = (function() {
 				// Pick a random index from the empty spots
 				const randomNum = emptySpots[Math.floor(Math.random() * emptySpots.length)];
 				gameBoard[randomNum] = symbol;
-				displayBoard();
 			}
+			displayBoard();
+			checkWin();
 		}
 		return gameBoard;
 	};
 	
 	// Execute player's move
 	function playerRound(tileNum) {
-		gameBoard[tileNum] = playerSymbol;
-		displayBoard();
+		if (!checkWin()) {
+			gameBoard[tileNum] = playerSymbol;
+			displayBoard();
+		}
 		return gameBoard;
 	};
 	
@@ -84,8 +95,7 @@ const gameController = (function() {
 			const tileNum = tile.classList[1];
 			if (gameBoard[tileNum] == '') {
 				playerRound(tileNum);
-				displaySymbol(tileNum, tile); // Display symbol after clicking
-				setTimeout(()=> compRound(compSymbol), 250);
+				setTimeout(() => compRound(compSymbol), 100);
 			}
 		}
 
@@ -98,7 +108,7 @@ const gameController = (function() {
 		}
 
 		console.log('Game Start!');
-		setTimeout(() => compRound(compSymbol), 500);
+		setTimeout(() => compRound(compSymbol), 100);
 	}
 
 	return { playGame };
