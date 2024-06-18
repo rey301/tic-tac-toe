@@ -7,7 +7,7 @@ body {
 
 #board {
 	display: grid;
-	height: 500px;
+	height: 600px;
 	aspect-ratio: 1/1;
 	grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
 	border: 1px solid black;
@@ -35,10 +35,10 @@ img {
 }
 
 .circle{
-	height: 150px;
+	height: 140px;
 }
 
 .cross {
-	height: 240px;
+	height: 200px;
 }
 

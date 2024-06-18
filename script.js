@@ -1,39 +1,46 @@
 // game controller module that controls all features of tic tac toe;
 const gameController = (function() {
 	const grid = document.getElementById('board');
-
 	let gameBoard = newGameBoard();
 	let gridStr = '';
 	let playerSymbol;
-	let playerRoundEnd = true;
+
 
 	function newGameBoard() {
 		let gameBoard = new Array();
+
 		for (let i=0; i < 9; i++) {
 			gameBoard[i] = '';
 		}
+
+		// reset dom gameboard
+		var symbols = document.getElementsByClassName('symbol');
+		while (symbols.length > 0) {
+			symbols[0].parentNode.removeChild(symbols[0]);
+		}
+
 		return gameBoard;
 	}
 
-	function displaySymbol(blockNum, block) {
+	function displaySymbol(tileNum, tile) {
 		var symbol = document.createElement('img');
 
-			if (gameBoard[blockNum] == 'o') {
-				symbol.setAttribute('src', 'svgs/circle-svgrepo-com.svg');
-				symbol.className = 'circle';
-			} else if (gameBoard[blockNum] == 'x') {
-				symbol.setAttribute('src', 'svgs/cross-svgrepo-com.svg');
-				symbol.className = 'cross';
-			}
-		
-		block.appendChild(symbol);
+		if (gameBoard[tileNum] == 'o') {
+			symbol.setAttribute('src', 'svgs/circle.svg');
+			symbol.className = 'symbol circle';
+		} else if (gameBoard[tileNum] == 'x') {
+			symbol.setAttribute('src', 'svgs/cross.svg');
+			symbol.className = 'symbol cross';
+		}
+
+		tile.appendChild(symbol);
 	}
 
 	function displayBoard() {
-		for (const block of grid.children) {
-			let blockNum = block.classList[1];
+		for (const tile of grid.children) {
+			let tileNum = tile.classList[1];
 			// run again to make sure it displays the comp's symbol
-			displaySymbol(blockNum, block); 
+			displaySymbol(tileNum, tile); 
 		}
 	}
 
@@ -104,30 +111,45 @@ const gameController = (function() {
 		displayBoard();
 		return gameBoard;
 	};
-
+	
 	function playGame() {
 		gameBoard = newGameBoard();
+		
+		// Choose player's symbol
 		let input = prompt('X or O?');
 		playerSymbol = input.toLowerCase();
+
+		// Choose computer's symbol
 		let compSymbol;
 		playerSymbol == 'x' ? compSymbol = 'o' : compSymbol = 'x';
 
-		for (const block of grid.children) {
-			let blockNum = block.classList[1];
-			block.addEventListener('click', () => {
-				if (gameBoard[blockNum] == '') {
-					playerRound(blockNum);
-				}
-				// display the symbol upon clicking
-				displaySymbol(blockNum, block);
-				compRound(compSymbol);
-			});
+		// Listener to store player symbol on a tile
+		function tileClickListener(event) {
+			let tile = event.currentTarget;
+			let tileNum = tile.classList[1];
+			if (gameBoard[tileNum] == '') {
+				playerRound(tileNum);
+			}
+
+			displaySymbol(tileNum, tile); // Display symbol after clicking
+			setTimeout(()=> compRound(compSymbol), 250);
 		}
 
-		compRound(compSymbol);
-		console.log('Game Start!');
+		// WeakMap to store event listeners
+		const listenersMap = new WeakMap();
 
-		
+	// Loop through each tile in the grid
+	for (const tile of grid.children) {
+		// Remove any existing event listener by cloning the node
+    	const newtile = tile.cloneNode(true);
+    	tile.replaceWith(newtile);
+
+    	// Add the new event listener
+    	newtile.addEventListener('click', tileClickListener);
+	}
+
+		console.log('Game Start!');
+		setTimeout(() => compRound(compSymbol), 500);
 	}
 
 	return {
