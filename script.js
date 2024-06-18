@@ -34,9 +34,7 @@ const gameController = (function() {
 
 	// Function to disable further clicks on tiles
 	function disableTiles() {
-		for (const tile of grid.children) {
-			attachListener(tileClickMessageListener);
-		}
+		attachListener(tileClickMessageListener);
 	}
 
 	function checkWin() {
@@ -54,8 +52,8 @@ const gameController = (function() {
 			// Checking for winning conditions for 'x' and 'o';
 			if (val1 && val1 === val2 && val1 === val3) {
 				disableTiles();
+				playBtn.textContent = 'New Game';
 				setTimeout(() => window.alert(`${val1} wins!`), 100);	
-							
 				return true;
 			};
 			if (!val1 || !val2 || !val3) tieFlag = false;
@@ -63,7 +61,7 @@ const gameController = (function() {
 		
 		if (tieFlag) {
 			disableTiles();
-
+			playBtn.textContent = 'New Game';
 			setTimeout(() => window.alert("It's a tie!"), 100);
 			return true;
 		}
